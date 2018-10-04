@@ -1,0 +1,1930 @@
+{
+	"info": {
+		"_postman_id": "9cfa4a01-b7e2-4167-ac29-616322b4bc71",
+		"name": "qa-automation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Setup",
+			"item": [
+				{
+					"name": "Get PostmanBDD",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "340bb21f-2b55-4024-bf23-22c2142a25ad",
+								"type": "text/javascript",
+								"exec": [
+									"postman.setGlobalVariable('postmanBDD', responseBody);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://bigstickcarpet.com/postman-bdd/dist/postman-bdd.js",
+							"protocol": "http",
+							"host": [
+								"bigstickcarpet",
+								"com"
+							],
+							"path": [
+								"postman-bdd",
+								"dist",
+								"postman-bdd.js"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Project",
+			"item": [
+				{
+					"name": "100 Read project(s) and Create new project",
+					"item": [
+						{
+							"name": "100.1 Get all projects",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "12631397-d034-4136-bdcb-b99f32296257",
+										"type": "text/javascript",
+										"exec": [
+											"// Load Postman BDD",
+											"eval(globals.postmanBDD);",
+											"",
+											"describe('Get all projects', () => {",
+											"    it('should be more than 0', () => {",
+											"        var responseJson = JSON.parse(responseBody);",
+											"        expect(responseJson.length > 0);",
+											"    });",
+											"    ",
+											"    it('should be the json schema matched', () => {",
+											"        var jsonData = pm.response.json();",
+											"        var result = tv4.validate(jsonData, pm.environment.get(\"projectsSchema\"), false, true);",
+											"        if (result !== true) {",
+											"            console.log('Schema validation failed:', tv4.error);",
+											"            console.log(tv4.error.dataPath);",
+											"        }",
+											"        expect(result).to.be.true;",
+											"    });",
+											"    ",
+											"    var jsonData = pm.response.json();",
+											"    tests[\"Validate service returns records\"] = jsonData.length > 0;",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseURL}}/API/v8/projects",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"API",
+										"v8",
+										"projects"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "100.2 Create a new project",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "848b1b02-3522-4505-9ffd-4f866195f012",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"",
+											"pm.environment.set(\"projectId\", response.body.id);",
+											"pm.environment.set(\"projectName\", response.body.name);",
+											"",
+											"console.log(pm.environment.get(\"projectId\"));",
+											"console.log(pm.environment.get(\"projectName\"));",
+											"",
+											"describe('Create new project', () => {",
+											"    it('should be more than 0', () => {",
+											"        var responseJson = JSON.parse(responseBody);",
+											"        expect(responseJson.length > 0);",
+											"    });",
+											"    ",
+											"    it('should be the json schema matched', () => {",
+											"        var jsonData = pm.response.json();",
+											"        var result = tv4.validate(jsonData, pm.environment.get(\"projectsSchema\"), false, true);",
+											"        if (result !== true) {",
+											"            console.log('Schema validation failed:', tv4.error);",
+											"            console.log(tv4.error.dataPath);",
+											"        }",
+											"        expect(result).to.be.true;",
+											"    });",
+											"    ",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"name\": \"Learning {{$randomInt}}\"\r\n}"
+								},
+								"url": {
+									"raw": "{{baseURL}}/API/v8/projects",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"API",
+										"v8",
+										"projects"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "100.3 Get a project created",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "80220645-df0e-4cd9-935d-c086c88c0762",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"",
+											"var pId = response.body.id;",
+											"var pName = response.body.name;",
+											"",
+											"describe('Get a project', () => {",
+											"    it('should have the correct name', () => {",
+											"        console.log(\"Using variables: \" + pm.variables.get(\"projectName\") + \" - Using environment: \" + pm.environment.get(\"projectName\"));",
+											"        expect(pName).to.equals(pm.environment.get(\"projectName\"));",
+											"        pm.environment.set(\"projectName\", response.body.name);",
+											"    });",
+											"    ",
+											"    it('should have the correct id', () => {",
+											"        expect(pId).to.equals(pm.environment.get(\"projectId\"));",
+											"    });",
+											"});",
+											"    ",
+											"//Schema validation solution #1    ",
+											"var jsonData = JSON.parse(responseBody);",
+											"tests[\"JSON schema validation #1\"] = tv4.validate(jsonData, pm.environment.get(\"projectSchema\"), false, true);",
+											"",
+											"//Schema validation solution #2",
+											"pm.test(\"JSON schema validation #2\", function() {",
+											"    var responseData = pm.response.json();",
+											"    var result = tv4.validate(responseData, pm.environment.get(\"projectSchema\"), false, true);",
+											"    if (result !== true) {",
+											"            console.log('Schema validation failed:', tv4.error);",
+											"            console.log(tv4.error.dataPath);",
+											"    }",
+											"    pm.expect(result).to.be.true;",
+											"    console.log(JSON.stringify(result));",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseURL}}/API/v8/projects/{{projectId}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"API",
+										"v8",
+										"projects",
+										"{{projectId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "bed9d989-7a5e-45e9-ba0d-8d9fbff00b0e",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "bf87ae02-9f46-4423-a223-337ec978c90a",
+								"type": "text/javascript",
+								"exec": [
+									"eval(globals.postmanBDD);",
+									"",
+									"describe('100 Tests', () => {",
+									"    it('should return a 200 response', () => {",
+									"        response.should.have.status(200);",
+									"    });",
+									"    ",
+									"    it('should return a JSON response', () => {",
+									"        response.should.be.json;",
+									"    });",
+									"});"
+								]
+							}
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "101 Update new project",
+					"item": [
+						{
+							"name": "101.1 Update a project",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6c7290f9-a7a9-42ae-bde7-68dc8bb216d7",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"",
+											"console.log(\"New name: \"+pm.environment.get(\"projectName\"));",
+											"",
+											"describe('Update a project', () => {",
+											"    it('should return a 204 response', () => {",
+											"        response.should.have.status(204);",
+											"    });",
+											"    ",
+											"    it('should not return a body response', () => {",
+											"        pm.response.to.not.have.body();",
+											"    });",
+											"});"
+										]
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "62c8cd45-9c26-491e-be2f-b4284c180f6b",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"var newName = pm.environment.get(\"projectName\");",
+											"pm.environment.set(\"projectName\", newName + \" Updated\");"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"name\": \"{{projectName}}\"\r\n}"
+								},
+								"url": {
+									"raw": "{{baseURL}}/API/v8/projects/{{projectId}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"API",
+										"v8",
+										"projects",
+										"{{projectId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "101.2 Validation for project updated",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "7db82e63-56cb-44cd-ae19-c6057852ef4f",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"",
+											"var pId = response.body.id;",
+											"var pName = response.body.name;",
+											"",
+											"describe('Get a project', () => {",
+											"    it('should have the correct name', () => {",
+											"        console.log(\"Using variables: \" + pm.variables.get(\"projectName\") + \" - Using environment: \" + pm.environment.get(\"projectName\"));",
+											"        expect(pName).to.equals(pm.environment.get(\"projectName\"));",
+											"        pm.environment.set(\"projectName\", response.body.name);",
+											"    });",
+											"    ",
+											"    it('should have the correct id', () => {",
+											"        expect(pId).to.equals(pm.environment.get(\"projectId\"));",
+											"    });",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseURL}}/API/v8/projects/{{projectId}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"API",
+										"v8",
+										"projects",
+										"{{projectId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a121c532-d111-4aaf-b385-3e611b995491",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "879f9c07-d6dc-4ea9-99c6-593b9ffae79f",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "102 Delete project",
+					"item": [
+						{
+							"name": "102.1 Delete a project",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "318b88d0-4c4e-4b2e-a426-a39ae6295815",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"",
+											"if (responseCode.code === 204) {",
+											"    console.log(\"The project was deleted\");",
+											"}",
+											"",
+											"describe('Update a project', () => {",
+											"    it('should return a 204 response', () => {",
+											"        response.should.have.status(204);",
+											"    });",
+											"    ",
+											"    it('should not return a body response', () => {",
+											"        pm.response.to.not.have.body();",
+											"    });",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseURL}}/API/v8/projects/{{projectId}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"API",
+										"v8",
+										"projects",
+										"{{projectId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "102.2 Validation the project was deleted",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "7fecd6a1-0869-4cdd-8db1-b249c75772f3",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"",
+											"var pId = response.body.id;",
+											"var pName = response.body.name;",
+											"",
+											"describe('Validate project was deleted', () => {",
+											"    it('should return a 404 response', () => {",
+											"        response.should.have.status(404);",
+											"    });",
+											"    ",
+											"    it('should get Not Found text', () => {",
+											"        expect(pm.response.text()).to.include(\"Not Found\");",
+											"    });",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseURL}}/API/v8/projects/{{projectId}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"API",
+										"v8",
+										"projects",
+										"{{projectId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "78cdec50-0a58-4df2-ab03-f5c0c0875274",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "9d5380dd-731e-49e2-b01e-8f11ec6e84d9",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "103 Negative tests",
+					"item": [
+						{
+							"name": "103.1 Incorrect type Creating new project: error 400",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "cbbf2bc9-396c-413e-96b1-08868dc327be",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"",
+											"describe('Get Bad Request Creating a new project', () => {",
+											"    it('should return a 400 response', () => {",
+											"        response.should.have.status(400);",
+											"    });",
+											"    ",
+											"    it('should get a Json decode error', () => {",
+											"        expect(pm.response.text()).to.include(\"JSON decode error: unexpected bool\");",
+											"    });",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"name\": true\r\n}"
+								},
+								"url": {
+									"raw": "{{baseURL}}/API/v8/projects",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"API",
+										"v8",
+										"projects"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "103.2 Empty name Creating new project: error 400",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "3bece196-e126-446b-a737-b287e5f5e200",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"",
+											"describe('Get Bad Request Creating a new project', () => {",
+											"    it('should return a 400 response', () => {",
+											"        response.should.have.status(400);",
+											"    });",
+											"    ",
+											"    it('should get Empty name text', () => {",
+											"        expect(pm.response.text()).to.include(\"Empty name\");",
+											"    });",
+											"});",
+											"",
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"name\": \"\"\r\n}"
+								},
+								"url": {
+									"raw": "{{baseURL}}/API/v8/projects",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"API",
+										"v8",
+										"projects"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "103.3 Get a fake project: error 404",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "9b57c87e-ca4a-421d-b842-b6dff4e1f8bb",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"",
+											"describe('Get Not Found Get a project', () => {",
+											"    it('should return a 404 response', () => {",
+											"        response.should.have.status(404);",
+											"    });",
+											"    ",
+											"    it('should get Not Found text', () => {",
+											"        expect(pm.response.text()).to.include(\"Not Found\");",
+											"    });",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseURL}}/API/v8/projects/1234567890",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"API",
+										"v8",
+										"projects",
+										"1234567890"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "103.4 Delete a nonexistent project: error 404",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "37eeaa5d-da69-4327-93fc-642599916c52",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"",
+											"describe('Get Not Found Get a project', () => {",
+											"    it('should return a 404 response', () => {",
+											"        response.should.have.status(404);",
+											"    });",
+											"    ",
+											"    it('should get 404 page not found text', () => {",
+											"        expect(pm.response.text()).to.include(\"404 page not found\");",
+											"    });",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseURL}}/API/v8/projects/fake",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"API",
+										"v8",
+										"projects",
+										"fake"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "3f30c4f8-ea5f-4dc3-874f-8ae8daf3edb5",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "ce57dcf5-969a-48ae-b10a-f93c17debdf0",
+						"type": "text/javascript",
+						"exec": [
+							"eval(globals.postmanBDD);",
+							"",
+							"describe('Project Tests', () => {",
+							"    it('should be protocol equal to https', () => {",
+							"            expect(pm.request.url.protocol).to.be.eql(\"https\");",
+							"    });",
+							"});"
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Tasks",
+			"item": [
+				{
+					"name": "200 Read task(s) and Create new task",
+					"item": [
+						{
+							"name": "200.1 Get active tasks",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5bcbc12a-217e-4ffb-9f4e-8bf3a287ace3",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"",
+											"describe('Get all tasks', () => {",
+											"    it('should be more than 0', () => {",
+											"        var responseJson = JSON.parse(responseBody);",
+											"        expect(responseJson.length > 0);",
+											"    });",
+											"    ",
+											"    if (pm.response.json().length > 0) {",
+											"        it('should be the json schema matched', () => {",
+											"            var jsonData = pm.response.json();",
+											"            var result = tv4.validate(jsonData, pm.environment.get(\"taskSchema\"), false, true);",
+											"            if (result !== true) {",
+											"             console.log('Schema validation failed:', tv4.error);",
+											"                console.log(tv4.error.dataPath);",
+											"            }",
+											"            expect(result).to.be.true;",
+											"        });",
+											"    }",
+											"    ",
+											"    ",
+											"    ",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseURL}}/API/v8/tasks",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"API",
+										"v8",
+										"tasks"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "200.2 Create a new task",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "34cdcedd-dc65-46e0-a093-f8fca16609c7",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"",
+											"pm.environment.set(\"taskId\", response.body.id);",
+											"pm.environment.set(\"taskContent\", response.body.content);",
+											"",
+											"describe('Create new task', () => {",
+											"    it('should be more than 0', () => {",
+											"        var responseJson = JSON.parse(responseBody);",
+											"        expect(responseJson.length > 0);",
+											"    });",
+											"    ",
+											"    it('should be the json schema matched', () => {",
+											"        var jsonData = pm.response.json();",
+											"        var result = tv4.validate(jsonData, pm.environment.get(\"taskSchema\"), false, true);",
+											"        if (result !== true) {",
+											"            console.log('Schema validation failed:', tv4.error);",
+											"            console.log(tv4.error.dataPath);",
+											"        }",
+											"        expect(result).to.be.true;",
+											"    });",
+											"    ",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"content\": \"Wash the car {{$randomInt}}\"\n}"
+								},
+								"url": {
+									"raw": "{{baseURL}}/API/v8/tasks",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"API",
+										"v8",
+										"tasks"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "200.3 Get a task",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "cfeb6623-68ca-41a3-881d-9a9be79cc4de",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"",
+											"var tId = response.body.id;",
+											"var tContent = response.body.content;",
+											"",
+											"describe('Get a task', () => {",
+											"    it('should have the correct name', () => {",
+											"        expect(tContent).to.equals(pm.environment.get(\"taskContent\"));",
+											"    });",
+											"    ",
+											"    it('should have the correct id', () => {",
+											"        expect(tId).to.equals(pm.environment.get(\"taskId\"));",
+											"    });",
+											"    ",
+											"    it('should be the json schema matched', () => {",
+											"        var jsonData = pm.response.json();",
+											"        var result = tv4.validate(jsonData, pm.environment.get(\"taskSchema\"), false, true);",
+											"        if (result !== true) {",
+											"            console.log('Schema validation failed:', tv4.error);",
+											"            console.log(tv4.error.dataPath);",
+											"        }",
+											"        expect(result).to.be.true;",
+											"    });",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseURL}}/API/v8/tasks/{{taskId}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"API",
+										"v8",
+										"tasks",
+										"{{taskId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "7df777df-042c-4306-a32b-c1c5b7ae68fe",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "4bf0d807-e3cf-4750-9e71-91d3c23373f1",
+								"type": "text/javascript",
+								"exec": [
+									"eval(globals.postmanBDD);",
+									"",
+									"describe('200 Tests', () => {",
+									"    it('should return a 200 response', () => {",
+									"        response.should.have.status(200);",
+									"    });",
+									"    ",
+									"    it('should return a JSON response', () => {",
+									"        response.should.be.json;",
+									"    });",
+									"});"
+								]
+							}
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "201 Update task",
+					"item": [
+						{
+							"name": "201.1 Update a task",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "93e8113c-afac-499e-848f-a077834c6449",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"var newContent = pm.environment.get(\"taskContent\");",
+											"pm.environment.set(\"taskContent\", newContent + \" Updated\");"
+										]
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "2e4b625d-6945-4e60-98f1-70dc092ee8d2",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"",
+											"console.log(\"New taskname: \"+pm.environment.get(\"taskContent\"));",
+											"",
+											"describe('Update a project', () => {",
+											"    it('should return a 204 response', () => {",
+											"        response.should.have.status(204);",
+											"    });",
+											"    ",
+											"    it('should not return a body response', () => {",
+											"        pm.response.to.not.have.body();",
+											"    });",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"content\": \"{{taskContent}}\"\n}"
+								},
+								"url": {
+									"raw": "{{baseURL}}/API/v8/tasks/{{taskId}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"API",
+										"v8",
+										"tasks",
+										"{{taskId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "201.2 Validation for task update",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6d145b75-2a5b-47bf-9fe4-0bf81f8c63a8",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"",
+											"var tId = response.body.id;",
+											"var tContent = response.body.content;",
+											"",
+											"describe('Validate that the task has been updated', () => {",
+											"    it('should have the correct name', () => {",
+											"        expect(tContent).to.equals(pm.environment.get(\"taskContent\"));",
+											"    });",
+											"    ",
+											"    it('should have the correct id', () => {",
+											"        expect(tId).to.equals(pm.environment.get(\"taskId\"));",
+											"    });",
+											"    ",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseURL}}/API/v8/tasks/{{taskId}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"API",
+										"v8",
+										"tasks",
+										"{{taskId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c16067a3-8163-4384-8c9a-cbb65527c7e8",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "528f76f7-084f-4454-a9a0-43f8ac649f74",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "202 Close task",
+					"item": [
+						{
+							"name": "202.1 Close a task",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "86e570b0-8e50-401c-9aca-1e378ed3f758",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"",
+											"console.log(\"Taskname: \"+pm.environment.get(\"taskContent\")+\" has been closed\");",
+											"",
+											"describe('Close a task', () => {",
+											"    it('should return a 204 response', () => {",
+											"        response.should.have.status(204);",
+											"    });",
+											"    ",
+											"    it('should not return a body response', () => {",
+											"        pm.response.to.not.have.body();",
+											"    });",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseURL}}/API/v8/tasks/{{taskId}}/close",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"API",
+										"v8",
+										"tasks",
+										"{{taskId}}",
+										"close"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "202.2 Validation for task closed",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaffda9f-f09d-4c7c-8762-9fb21abc3727",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"",
+											"describe('Validate that the task has been closed', () => {",
+											"    it('should return a 404 response', () => {",
+											"        response.should.have.status(404);",
+											"    });",
+											"    ",
+											"    it('Get Not Found text', () => {",
+											"        expect(pm.response.text()).to.include(\"Not Found\");",
+											"    });",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseURL}}/API/v8/tasks/{{taskId}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"API",
+										"v8",
+										"tasks",
+										"{{taskId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "203 Reopen task",
+					"item": [
+						{
+							"name": "203.1 Reopen a task",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "e1f6124f-7775-4893-86ec-08bb9e62fe74",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"",
+											"console.log(\"Taskname: \"+pm.environment.get(\"taskContent\")+\" has been closed\");",
+											"",
+											"describe('Reopen a task', () => {",
+											"    it('should return a 204 response', () => {",
+											"        response.should.have.status(204);",
+											"    });",
+											"    ",
+											"    it('should not return a body response', () => {",
+											"        pm.response.to.not.have.body();",
+											"    });",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseURL}}/API/v8/tasks/{{taskId}}/reopen",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"API",
+										"v8",
+										"tasks",
+										"{{taskId}}",
+										"reopen"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "203.2 Validation for task Reopened",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "af3bcf25-e362-48b3-b719-a5f6619ca23a",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"",
+											"var tId = response.body.id;",
+											"var tContent = response.body.content;",
+											"",
+											"describe('Validate that a task has been reopened', () => {",
+											"    it('should have the correct name', () => {",
+											"        expect(tContent).to.equals(pm.environment.get(\"taskContent\"));",
+											"    });",
+											"    ",
+											"    it('should have the correct id', () => {",
+											"        expect(tId).to.equals(pm.environment.get(\"taskId\"));",
+											"    });",
+											"    ",
+											"    it('should be the json schema matched', () => {",
+											"        var jsonData = pm.response.json();",
+											"        var result = tv4.validate(jsonData, pm.environment.get(\"taskSchema\"), false, true);",
+											"        if (result !== true) {",
+											"            console.log('Schema validation failed:', tv4.error);",
+											"            console.log(tv4.error.dataPath);",
+											"        }",
+											"        expect(result).to.be.true;",
+											"    });",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseURL}}/API/v8/tasks/{{taskId}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"API",
+										"v8",
+										"tasks",
+										"{{taskId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "204 Delete task",
+					"item": [
+						{
+							"name": "204.1 Delete a task",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "0f582392-44a4-4eac-bb84-3f86675aa6e2",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"",
+											"if (responseCode.code === 204) {",
+											"    console.log(\"The task \"+pm.environment.get(\"taskContent\")+\" was deleted\");",
+											"}",
+											"",
+											"describe('Delete a task', () => {",
+											"    it('should return a 204 response', () => {",
+											"        response.should.have.status(204);",
+											"    });",
+											"    ",
+											"    it('should not return a body response', () => {",
+											"        pm.response.to.not.have.body();",
+											"    });",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseURL}}/API/v8/tasks/{{taskId}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"API",
+										"v8",
+										"tasks",
+										"{{taskId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "204.2 Validation for task deleted",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "b2a35e27-08ab-4f8f-8259-b7fadd4cad3b",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"",
+											"describe('Validate that a task has been deleted', () => {",
+											"    it('should return a 404 response', () => {",
+											"        response.should.have.status(404);",
+											"    });",
+											"    ",
+											"    it('should get Not Found text', () => {",
+											"        expect(pm.response.text()).to.include(\"Not Found\");",
+											"    });",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseURL}}/API/v8/tasks/{{taskId}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"API",
+										"v8",
+										"tasks",
+										"{{taskId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "205 Negative tests",
+					"item": [
+						{
+							"name": "205.1 Incorrect type Create a new task: error 400",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "9b86111f-a23b-4df3-9f5a-38754188aa50",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"",
+											"describe('Get Bad Request Creating a new task', () => {",
+											"    it('should return a 400 response', () => {",
+											"        response.should.have.status(400);",
+											"    });",
+											"    ",
+											"    it('should get JSON decode error text', () => {",
+											"        expect(pm.response.text()).to.include(\"JSON decode error: unexpected number\");",
+											"    });",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"content\": 1234567890\n}"
+								},
+								"url": {
+									"raw": "{{baseURL}}/API/v8/tasks",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"API",
+										"v8",
+										"tasks"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "205.2 Get Unsupported priority value - Create a new task: error 400",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "37348a15-8f39-4c4c-bf72-567da071b2c4",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"",
+											"describe('Get Bad Request Creating a new task', () => {",
+											"    it('should return a 400 response', () => {",
+											"        response.should.have.status(400);",
+											"    });",
+											"    ",
+											"    it('Get Unsupported priority value text', () => {",
+											"        expect(pm.response.text()).to.include(\"Unsupported priority value\");",
+											"    });",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"content\": \"Task\",\n\t\"priority\": 5\t\n}"
+								},
+								"url": {
+									"raw": "{{baseURL}}/API/v8/tasks",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"API",
+										"v8",
+										"tasks"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "205.3 Get a fake task: error 404",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "c4a2f82e-f3ed-47ee-b259-4358cd2a6fb7",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"",
+											"describe('Get Not Found Get a task', () => {",
+											"    it('should return a 404 response', () => {",
+											"        response.should.have.status(404);",
+											"    });",
+											"    ",
+											"    it('Get Not Found text', () => {",
+											"        expect(pm.response.text()).to.include(\"Not Found\");",
+											"    });",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseURL}}/API/v8/tasks/1234567890",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"API",
+										"v8",
+										"tasks",
+										"1234567890"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "205.4 Close a fake task: 204",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "baabd260-6637-4ccd-b244-d76cd18704cd",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"",
+											"describe('Close fake task', () => {",
+											"    it('should return a 204 response', () => {",
+											"        response.should.have.status(204);",
+											"    });",
+											"    ",
+											"    it('should return an empty body', () => {",
+											"        pm.response.to.not.have.body();",
+											"    });",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseURL}}/API/v8/tasks/1234567890/close",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"API",
+										"v8",
+										"tasks",
+										"1234567890",
+										"close"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "205.5 Reopen a fake task: error 400",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "61a56de5-1058-4d16-82c0-e46f74a334a7",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"",
+											"describe('Get Bad Request Reopen a fake task', () => {",
+											"    it('should return a 400 response', () => {",
+											"        response.should.have.status(400);",
+											"    });",
+											"    ",
+											"    it('should get Item not found text', () => {",
+											"        expect(pm.response.text()).to.include(\"Item not found\");",
+											"    });",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseURL}}/API/v8/tasks/1234567890/reopen",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"API",
+										"v8",
+										"tasks",
+										"1234567890",
+										"reopen"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "205.6 Delete a fake task: 204",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "c8707313-166b-422f-90e8-b8d04d98f88d",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"",
+											"describe('Delete fake task', () => {",
+											"    it('should return a 204 response', () => {",
+											"        response.should.have.status(204);",
+											"    });",
+											"    ",
+											"    it('should return an empty body', () => {",
+											"        pm.response.to.not.have.body();",
+											"    });",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseURL}}/API/v8/tasks/1234567890",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"API",
+										"v8",
+										"tasks",
+										"1234567890"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "205.7 Delete a null task: error 404",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ae04c5cd-aa62-405c-ade3-75467a112ca7",
+										"type": "text/javascript",
+										"exec": [
+											"eval(globals.postmanBDD);",
+											"",
+											"describe('Get Bad Request Creating a new task', () => {",
+											"    it('should return a 404 response', () => {",
+											"        response.should.have.status(404);",
+											"    });",
+											"    ",
+											"    it('should get 404 page not found text', () => {",
+											"        expect(pm.response.text()).to.include(\"404 page not found\");",
+											"    });",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseURL}}/API/v8/tasks/",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"API",
+										"v8",
+										"tasks",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "a886f557-328a-4375-b4e7-f4900402f8e8",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "080ac9bc-f054-4d87-8388-6985cbe4b1f0",
+						"type": "text/javascript",
+						"exec": [
+							"eval(globals.postmanBDD);",
+							"",
+							"describe('Project Tests', () => {",
+							"    it('should be protocol equal to https', () => {",
+							"            expect(pm.request.url.protocol).to.be.eql(\"https\");",
+							"    });",
+							"});"
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Clean up",
+			"item": [
+				{
+					"name": "CleanUp",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "937d52f3-a9a4-40da-8060-d58bc41510f7",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.unset(\"projectId\");",
+									"pm.environment.unset(\"projectName\");",
+									"pm.environment.unset(\"taskId\");",
+									"pm.environment.unset(\"taskContent\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseURL}}/API/v8/projects",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"API",
+								"v8",
+								"projects"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "ae46d974-a3eb-403e-a87e-9aae5f979851",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "b360e530-efaa-4c19-bc68-470b82424f7f",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "dfa4cbdc-cbd9-4ac2-8d22-f2daa92326ed",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "ffb7f1eb-9713-4522-a9f3-36ebf9dc2694",
+				"type": "text/javascript",
+				"exec": [
+					"eval(globals.postmanBDD);",
+					"",
+					"describe('Collection Tests', () => {",
+					"    it(\"should be less than 500ms\", () => {",
+					"        var responseTime = pm.response.responseTime;",
+					"        expect(responseTime).to.be.below(500);",
+					"    });",
+					"});"
+				]
+			}
+		}
+	]
+}

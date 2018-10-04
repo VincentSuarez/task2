@@ -1,0 +1,39 @@
+{
+  "id": "6c22a414-d131-479e-88e6-19fe29f0fc61",
+  "name": "qa",
+  "values": [
+    {
+      "key": "baseURL",
+      "value": "https://beta.todoist.com",
+      "description": "",
+      "enabled": true
+    },
+    {
+      "key": "token",
+      "value": "23ac34ad71ba872a92db41621b4b76409f65b0b6",
+      "description": "",
+      "enabled": true
+    },
+    {
+      "key": "projectSchema",
+      "value": "{\n  \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"id\": {\n      \"type\": \"integer\"\n    },\n    \"name\": {\n      \"type\": \"string\"\n    },\n    \"order\": {\n      \"type\": \"integer\",\n      \"readOnly\": true\n    },\n    \"indent\": {\n      \"type\": \"integer\"\n    },\n    \"comment_count\": {\n      \"type\": \"integer\",\n      \"readOnly\": true\n    }\n  },\n  \"required\": [\n    \"id\",\n    \"name\",\n    \"order\",\n    \"indent\",\n    \"comment_count\"\n  ]\n};",
+      "description": "",
+      "enabled": true
+    },
+    {
+      "key": "projectsSchema",
+      "value": "{\n  \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n  \"type\": \"array\",\n  \"items\": [\n    {\n      \"type\": \"object\",\n      \"properties\": {\n        \"id\": {\n          \"type\": \"integer\"\n        },\n        \"name\": {\n          \"type\": \"string\"\n        },\n        \"order\": {\n          \"type\": \"integer\"\n        },\n        \"indent\": {\n          \"type\": \"integer\",\n          \"readOnly\": true\n        },\n        \"comment_count\": {\n          \"type\": \"integer\",\n          \"readOnly\": true\n        }\n      },\n      \"required\": [\n        \"id\",\n        \"name\",\n        \"order\",\n        \"indent\",\n        \"comment_count\"\n      ]\n    }\n  ]\n};",
+      "description": "",
+      "enabled": true
+    },
+    {
+      "key": "taskSchema",
+      "value": "{\n  \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"id\": {\n      \"type\": \"integer\"\n    },\n    \"project_id\": {\n      \"type\": \"integer\",\n\t  \"readOnly\": true\n    },\n    \"content\": {\n      \"type\": \"string\"\n    },\n    \"completed\": {\n      \"type\": \"boolean\",\n\t  \"default\": false\n    },\n    \"label_ids\": {\n      \"type\": \"array\",\n      \"items\": {}\n    },\n    \"order\": {\n      \"type\": \"integer\",\n\t  \"readOnly\": true\n    },\n    \"indent\": {\n      \"type\": \"integer\",\n\t  \"readOnly\": true,\n      \"default\": 1,\n\t \"minimum\": 1, \n     \"maximum\": 5\n\t},\n    \"priority\": {\n      \"type\": \"integer\",\n\t  \"default\": 1,\n\t \"minimum\": 1, \n     \"maximum\": 4\n    },\n    \"comment_count\": {\n      \"type\": \"integer\"\n    },\n    \"url\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\n    \"id\",\n    \"project_id\",\n    \"content\",\n    \"completed\",\n    \"label_ids\",\n    \"order\",\n    \"indent\",\n    \"priority\",\n    \"comment_count\",\n    \"url\"\n  ]\n};",
+      "description": "",
+      "enabled": true
+    }
+  ],
+  "_postman_variable_scope": "environment",
+  "_postman_exported_at": "2018-10-02T06:49:48.759Z",
+  "_postman_exported_using": "Postman/6.3.0"
+}
